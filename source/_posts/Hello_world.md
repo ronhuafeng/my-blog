@@ -2,7 +2,7 @@
 title: Hello world!
 id: 1
 categories:
-  - 未分类
+  - 回忆中老去
 date: 2012-04-20 18:56:18
 tags:
 ---
