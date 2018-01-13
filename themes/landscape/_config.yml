@@ -1,8 +1,10 @@
 # Header
 menu:
   Home: /
-  Archives: /archives
-rss: /atom.xml
+  categories: /categories
+  archives: /archives
+  tags: /tags
+  rss: /atom.xml
 
 # Content
 excerpt_link: Read More

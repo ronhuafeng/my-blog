@@ -40,7 +40,7 @@ menu:
   categories: /categories
   about: /about
   archives: /archives
-  #tags: /tags
+  tags: /tags
   #sitemap: /sitemap.xml
   #commonweal: /404.html
 
@@ -173,8 +173,8 @@ toc:
 
 sidebar:
   # Sidebar Position, available value: left | right
+  #position: left
   position: left
-  #position: right
 
   # Sidebar Display, available value:
   #  - post    expand on posts automatically. Default.
