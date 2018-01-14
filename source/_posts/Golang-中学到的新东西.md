@@ -9,11 +9,11 @@ tags:
 
 # 数据类型
 
-## 1. `string` 类型
+## `string` 类型
 
 `string` 类型使用 2 个 word（64 bit 系统为 8 byte * 2）表示：一个 word 是指针，指向字符串存储区域；一个 word 表示长度数据。
 
-## 2. `slice` $\leftrightarrow$ `unsafe.Pointer`
+## `slice` $\leftrightarrow$ `unsafe.Pointer`
 
 ```go
 s := make([]byte, 200)
@@ -44,7 +44,7 @@ sliceHeader.Len = length
 sliceHeader.Data = uintptr(ptr)
 ```
 
-## 3. `map` 实现
+# `map` 实现
 
 整个页面的内容对我来说都是新的：https://tiancaiamao.gitbooks.io/go-internals/content/zh/02.3.html
 不过这个页面描述的内容和最新的 Golang source 有一定差别。
@@ -64,7 +64,7 @@ sliceHeader.Data = uintptr(ptr)
 
 如果 key 或者 value 小于 128 字节，那么它们是直接在 `bucket` 存储值，否则存指向数据的指针。
 
-## 4. `nil` 语义
+# `nil` 语义
 
 按照 Golang 规范，任何类型在未初始化时都对应一个零值：
 - `bool` $\rightarrow$ `true`
@@ -72,7 +72,7 @@ sliceHeader.Data = uintptr(ptr)
 - `string` $\rightarrow$ `""`
 - `pointer`/`function`/`interface`/`slice`/`channel`/`map` $\rightarrow$ `nil`
 
-### 关于 `interface{}`
+## 关于 `interface{}`
 
 ```go
 var v *T           // v == nil
@@ -80,7 +80,7 @@ var i interface{}  // i == nil
 i = v              // i != nil
 ```
 
-### 关于 `channel`
+## 关于 `channel`
 
 一些操作规则：
 - 读写一个 `nil` 的 `channel` 会立即阻塞
@@ -88,9 +88,9 @@ i = v              // i != nil
 - 写一个关闭的 `channel` 会导致 `panic`
 
 
-## 5. 函数调用
+# 函数调用
 
-### 汇编
+## 汇编
 
 可以看一下这个 Golang 的官方介绍页面：https://golang.org/doc/asm
 
@@ -111,7 +111,7 @@ MOVQ    BX,res+16(FP)
 RET     ,
 ```
 
-### Golang 调用 C
+## Golang 调用 C
 
 **add.c** ，和 **add.go** 在同一个目录
 ```c
@@ -126,7 +126,7 @@ C 文件中需要包含 `runtime.h` 头文件。因为 Golang 使用特殊寄存
 
 上面示例中返回值为空，使用 `ret` 作为返回值，`FLUSH` 在 `pkg/runtime/runtime.h` 中定义为 `USED()` ，防止编译器优化掉对某个变量的赋值操作（因为看不到这个变量在后面其他地方使用了）。
 
-### 函数调用时的内存布局
+## 函数调用时的内存布局
 
 Golang 中使用的 C 编译器是 plan9 的 C 编译器，与 gcc 有一定差异。
 这个页面中有部分基础介绍：
@@ -157,7 +157,7 @@ MOVQ    BX,d+16(FP)
 MOVQ    BX,e+24(FP)
 ```
 
-## 6. `go` 关键字
+# `go` 关键字
 
 `f(1, 2, 3)` 的汇编:
 ```nasm
@@ -180,7 +180,7 @@ POPQ    AX
 ```
 `12` 是参数占用的大小，`runtime.newproc` 函数接受的参数为：参数大小、新的 goroutine 要运行的函数、函数的参数。`runtime.newproc` 会新建一个栈空间，将栈参数的 12 个字节复制到新的栈空间，并让栈指针指向参数。可以看做 `runtime.newproc(size, f, args)` 。
 
-## 7. `defer` 关键字
+# `defer` 关键字
 
 `return x` 不是原子语句，函数执行顺序为：
 1. 给返回值赋值
@@ -189,6 +189,12 @@ POPQ    AX
 
 `defer` 实现对应 `runtime.deferproc`，其出现的地方插入指令 `call runtime.deferproc` ，函数返回之前的地方，插入 `call runtime.deferreturn` 。 goroutine 的控制结构中有一张表记录 `defer`，表以栈行为运作。
 
+
+# Continuous Stack
+
+我也基本理解了，具体细节可以看：https://tiancaiamao.gitbooks.io/go-internals/content/zh/03.5.html
+
+最后的 `runtime.lessstack` 有些没看懂。
 
 # 引用
 
