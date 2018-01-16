@@ -29,6 +29,76 @@ func RawSyscall6(trap, a1, a2, a3, a4, a5, a6 uintptr) (r1, r2 uintptr, err Errn
 
 # `runtime·entersyscall`
 
+```go
+func entersyscall(dummy int32) {
+	reentersyscall(getcallerpc(), getcallersp(unsafe.Pointer(&dummy)))
+}
+```
+
+```go
+func reentersyscall(pc, sp uintptr) {
+	_g_ := getg()
+
+	// Disable preemption because during this function g is in Gsyscall status,
+	// but can have inconsistent g->sched, do not let GC observe it.
+	_g_.m.locks++
+
+	// Entersyscall must not call any function that might split/grow the stack.
+	// (See details in comment above.)
+	// Catch calls that might, by replacing the stack guard with something that
+	// will trip any stack check and leaving a flag to tell newstack to die.
+	_g_.stackguard0 = stackPreempt
+	_g_.throwsplit = true
+
+	// Leave SP around for GC and traceback.
+	save(pc, sp)
+	_g_.syscallsp = sp
+	_g_.syscallpc = pc
+	casgstatus(_g_, _Grunning, _Gsyscall)
+	if _g_.syscallsp < _g_.stack.lo || _g_.stack.hi < _g_.syscallsp {
+		systemstack(func() {
+			print("entersyscall inconsistent ", hex(_g_.syscallsp), " [", hex(_g_.stack.lo), ",", hex(_g_.stack.hi), "]\n")
+			throw("entersyscall")
+		})
+	}
+
+	if trace.enabled {
+		systemstack(traceGoSysCall)
+		// systemstack itself clobbers g.sched.{pc,sp} and we might
+		// need them later when the G is genuinely blocked in a
+		// syscall
+		save(pc, sp)
+	}
+
+	if atomic.Load(&sched.sysmonwait) != 0 {
+		systemstack(entersyscall_sysmon)
+		save(pc, sp)
+	}
+
+	if _g_.m.p.ptr().runSafePointFn != 0 {
+		// runSafePointFn may stack split if run on this stack
+		systemstack(runSafePointFn)
+		save(pc, sp)
+	}
+
+	_g_.m.syscalltick = _g_.m.p.ptr().syscalltick
+	_g_.sysblocktraced = true
+	_g_.m.mcache = nil
+	_g_.m.p.ptr().m = 0
+	atomic.Store(&_g_.m.p.ptr().status, _Psyscall)
+	if sched.gcwaiting != 0 {
+		systemstack(entersyscall_gcwait)
+		save(pc, sp)
+	}
+
+	// Goroutines must not split stacks in Gsyscall status (it would corrupt g->sched).
+	// We set _StackGuard to StackPreempt so that first split stack check calls morestack.
+	// Morestack detects this case and throws.
+	_g_.stackguard0 = stackPreempt
+	_g_.m.locks--
+}
+```
+
 `runtime·entersyscall` 主要完成以下几件事：
 1. 声明函数为 `NOSPLIT` ，不触发栈扩展检查
 2. 禁止抢占
@@ -40,16 +110,35 @@ func RawSyscall6(trap, a1, a2, a3, a4, a5, a6 uintptr) (r1, r2 uintptr, err Errn
 8. 通过 `g->stackguard0 = StackPreempt` 使得出现 *split stack* 时可以通过 `morestack` 捕获并抛出错误
 9. 恢复抢占
 
+可以看到 `reentersyscall` 多次调用 `save` 保存 `pc` 和 `sp`。`save` 更新 `getg().sched` 中的 `sp` 和 `pc` ，使得调用 `gogo` 的时候可以恢复 `pc` 和 `sp` 。`reentersyscall` 中 `save` 的目的都是为 goroutine 跳回这个 `syscall` 调用者执行 `syscall` 时刻的 `pc` 和 `sp`做准备。
+
+需要继续深入：
+1. `StackPreempt` 
+2. `syscallstack` 和 `syscallguard` 的具体作用时机
+
 # `runtime·entersyscallblock`
 
-与 `runtime·entersyscall` 区别在于这个函数认为当前执行的 `syscall` 会运行较长时间，因此在函数中主动进行了 M 和 P 的解除绑定，无需等待 `sysmon` 处理。
+与 `runtime·entersyscall` 区别在于这个函数认为当前执行的 `syscall` 会运行较长时间，因此在函数中主动进行了 M 和 P 的解除绑定，无需等待 `sysmon` 处理。解除 M 和 P 绑定的逻辑由 `entersyscallblock_handoff` 实现。
+
+```go
+func entersyscallblock_handoff() {
+	if trace.enabled {
+		traceGoSysCall()
+		traceGoSysBlock(getg().m.p.ptr())
+	}
+	handoffp(releasep())
+}
+```
 
 # `runtime·exitsyscall`
 
 主要实现了从 `syscall` 状态中恢复的动作：
 1. 尝试调用 `exitsyscallfast` ，如果 M 与 P 没有完全解除绑定，那么该操作会将 M 和 P 重新绑定；否则获取一个空闲的 P 与当前 M 绑定。如果绑定成功，返回 `True`，否则返回 `False` 进行后续步骤处理。
-2. 如果 `exitsyscallfast` 返回 `True` ，函数就直接返回；返回 `False`，则将当前 goroutine 放到任务队列中等待调度
+2. 如果 `exitsyscallfast` 返回 `True` ，函数就直接返回；返回 `False`，则进入 *slow path* 将当前 goroutine 放到任务队列中等待调度，具体实现由 `mcall(exitsyscall0)` 实现。
 
+`exitsyscall0` 这个函数比较清晰，只是对其中 `dropg()` 的目的还没想清楚。
+
+`runtime·exitsyscall` 的函数说明中提到的 `// Write barriers are not allowed because our P may have been stolen.` 也没有搞清楚，知道和 GC 有一定关系。
 
 
 
