@@ -178,23 +178,99 @@ CALL    runtime.newproc(SB)
 POPQ    AX
 POPQ    AX
 ```
+
 `12` 是参数占用的大小，`runtime.newproc` 函数接受的参数为：参数大小、新的 goroutine 要运行的函数、函数的参数。`runtime.newproc` 会新建一个栈空间，将栈参数的 12 个字节复制到新的栈空间，并让栈指针指向参数。可以看做 `runtime.newproc(size, f, args)` 。
 
 # `defer` 关键字
 
 `return x` 不是原子语句，函数执行顺序为：
+
 1. 给返回值赋值
-2. `defer` 调用
-3. `return`
+1. `defer` 调用
+1. `return`
 
 `defer` 实现对应 `runtime.deferproc`，其出现的地方插入指令 `call runtime.deferproc` ，函数返回之前的地方，插入 `call runtime.deferreturn` 。 goroutine 的控制结构中有一张表记录 `defer`，表以栈行为运作。
 
-
 # Continuous Stack
 
-我也基本理解了，具体细节可以看：https://tiancaiamao.gitbooks.io/go-internals/content/zh/03.5.html
+我也基本理解了思路，具体细节可以看：https://tiancaiamao.gitbooks.io/go-internals/content/zh/03.5.html
 
 最后的 `runtime.lessstack` 有些没看懂。
+
+# 闭包
+
+闭包中引用的变量不能在栈上分配，否则闭包函数返回的时候，栈上变量的地址就失效了。
+
+## 逃逸分析（escape analyze）
+
+Golang 有个特性，可以自动识别哪些变量在栈上分配，哪些在堆上分配。
+
+```go
+func f() *Cursor {
+    var c Cursor
+    c.X = 500
+    noinline()
+    return &c
+}
+```
+
+```nasm
+MOVQ      $type."".Cursor+0(SB),(SP)    // 取变量c的类型，也就是Cursor
+PCDATA    $0,$16
+PCDATA    $1,$0
+CALL      ,runtime.new(SB)    // 调用new函数，相当于new(Cursor)
+PCDATA    $0,$-1
+MOVQ      8(SP),AX    // 取c.X的地址放到AX寄存器
+MOVQ      $500,(AX)    // 将AX存放的内存地址的值赋为500
+MOVQ      AX,"".~r0+24(FP)
+ADDQ      $16,SP
+```
+
+在编译的过程中可以通过指令输出哪些变量逃逸了：`go build --gcflags=-m main.go`
+
+## 闭包结构体
+
+闭包将函数和它引用的环境表示为一个结构体：
+
+```go
+type Closure struct {
+    F func()() 
+    i *int
+}
+```
+
+整体思路是返回闭包的时候，返回一个结构体，包含闭包返回函数的地址和引用的环境中的变量地址。
+
+```go
+func f(i int) func() int {
+    return func() int {
+        i++
+        return i
+    }
+}
+```
+
+```nasm
+MOVQ    $type.int+0(SB),(SP)
+PCDATA    $0,$16
+PCDATA    $1,$0
+CALL    ,runtime.new(SB)    // 是不是很熟悉，这一段就是i = new(int)    
+...    
+MOVQ    $type.struct { F uintptr; A0 *int }+0(SB),(SP)    // 这个结构体就是闭包的类型
+...
+CALL    ,runtime.new(SB)    // 接下来相当于 new(Closure)
+PCDATA    $0,$-1
+MOVQ    8(SP),AX
+NOP    ,
+MOVQ    $"".func·001+0(SB),BP
+MOVQ    BP,(AX)                // 函数地址赋值给Closure的F部分
+NOP    ,
+MOVQ    "".&i+16(SP),BP        // 将堆中new的变量i的地址赋值给Closure的值部分
+MOVQ    BP,8(AX)
+MOVQ    AX,"".~r1+40(FP)
+ADDQ    $24,SP
+RET    ,
+```
 
 # 引用
 
