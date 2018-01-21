@@ -4,7 +4,7 @@ categories:
   - 技术记录
 date: 2018-01-12 21:37:21
 tags:
-  -   Link-To-World
+  - note
 ---
 
 最初在 3Blue1Brown 发布的一个介绍区块链原理的视频中看到了这个组织的连接。发现比较有意思，给大家分享一下~
