@@ -1,10 +1,8 @@
 # Header
 menu:
   Home: /
-  categories: /categories
-  archives: /archives
-  tags: /tags
-  rss: /atom.xml
+  Archives: /archives
+rss: /atom.xml
 
 # Content
 excerpt_link: Read More
@@ -31,6 +29,7 @@ show_count: false
 
 # Miscellaneous
 google_analytics:
+gauges_analytics:
 favicon: /favicon.png
 twitter:
 google_plus:
