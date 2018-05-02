@@ -1,34 +1,32 @@
-
 language: node_js
-sudo: false
-node_js:
-  - "6"
-
+node_js: stable
 
 branches:
   only:
   - master
 
 cache:
+  apt: true
+  yarn: true
   directories:
     - node_modules
 
 before_install:
-- openssl aes-256-cbc -K $encrypted_aa85559c2cac_key -iv $encrypted_aa85559c2cac_iv
-  -in .travis/id_rsa_travis.enc -out ~/.ssh/id_rsa -d
-- chmod 600 ~/.ssh/id_rsa 
-- eval $(ssh-agent)
-- ssh-add ~/.ssh/id_rsa
-- cp .travis/ssh_config ~/.ssh/config
-
 - git config --global user.name 'bef0rewind'
 - git config --global user.email ron.huafeng@gmail.com
+- curl -o- -L https://yarnpkg.com/install.sh | bash
+- export PATH=$HOME/.yarn/bin:$PATH
+- npm install -g hexo-cli
 
 install:
-- npm install hexo-cli -g
-- npm install hexo --save
-
+- yarn
 script:
 - hexo clean
 - hexo generate
-- hexo deploy --silent
+after_success:
+- cd ./public
+- git init
+- git add --all .
+- git commit -m "Travis CI Auto Builder"
+- git push --quiet --force https://$REPO_TOKEN@github.com/ronhuafeng/ronhuafeng.github.io.git
+  master
