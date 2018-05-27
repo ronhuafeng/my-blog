@@ -3,17 +3,17 @@
 ## Source: https://github.com/hexojs/hexo/
 
 # Site
-title: Hexo
-subtitle:
-description:
+title: 不是追风少年
+subtitle: 
+description: 我在生活中汲取力量
 keywords:
-author: John Doe
-language:
-timezone:
+author: Bef0rewind
+language: 
+timezone: 
 
 # URL
 ## If your site is put in a subdirectory, set url as 'http://yoursite.com/child' and root as '/child/'
-url: http://yoursite.com
+url: http://blog.formalscience.com
 root: /
 permalink: :year/:month/:day/:title/
 permalink_defaults:
