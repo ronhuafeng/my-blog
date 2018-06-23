@@ -1,5 +1,5 @@
 ---
-title: Upgrade DigitalOcean's Ubuntu 17.04 release which reaches/passes its End of Life (EOL)
+title: Upgrade DigitalOcean's Ubuntu 17.04 to LTS version in 2018-06
 date: 2018-06-23
 categories:
   - 技术记录
