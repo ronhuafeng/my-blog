@@ -18,6 +18,16 @@ root: /
 permalink: :year/:month/:day/:title/
 permalink_defaults:
 
+# Feed
+feed:
+  type: atom
+  path: atom.xml
+  limit: 20
+  hub:
+  content:
+  content_limit: 140
+  content_limit_delim: ' '
+
 # Directory
 source_dir: source
 public_dir: public
