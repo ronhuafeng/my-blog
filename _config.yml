@@ -18,7 +18,10 @@ root: /
 permalink: :year/:month/:day/:title/
 permalink_defaults:
 
-# Feed
+# RSS Feed
+plugin:
+- hexo-generator-feed
+
 feed:
   type: atom
   path: atom.xml
