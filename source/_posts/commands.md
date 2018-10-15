@@ -16,3 +16,7 @@ ffmpeg -r 30 -start_number 3455 -i _IMG%d.jpg -s 960X600 -pix_fmt yuv420p 30fps-
 - `-r 30`: 30 frames per second
 - `-s 960X600`: resolution
 - `-pix_fmt yuv420p`: for OsX
+
+## youtube-dl video and extract audio file 
+
+`youtube-dl --proxy socks5://127.0.0.1:1080 -x --audio-format mp3 youtube-url`
