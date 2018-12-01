@@ -14,12 +14,8 @@ cache:
 before_install:
 - git config --global user.name 'bef0rewind'
 - git config --global user.email ron.huafeng@gmail.com
-- curl -o- -L https://yarnpkg.com/install.sh | bash
-- export PATH=$HOME/.yarn/bin:$PATH
 - npm install -g hexo-cli
 
-install:
-- yarn
 script:
 - hexo clean
 - hexo generate
