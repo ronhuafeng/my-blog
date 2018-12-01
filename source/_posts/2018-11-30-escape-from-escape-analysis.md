@@ -97,7 +97,7 @@ Go 语言中对 `uintptr` 是这样描述的：
 > uintptr is an integer type that is large enough to hold the bit pattern of any pointer.
 
 比如在 64-bit Linux 系统上 `uintptr` 被定义成为了 `uint64`。
-Go 中合法的类型转换为：`nomal pointer` ⟷ `unsafe.Pointer` ⟷ `uintptr` 。
+Go 中合法的类型转换为：`normal pointer` ⟷ `unsafe.Pointer` ⟷ `uintptr` 。
 因此我们可以把上面的程序中的 `addrObj` 转换为 `uintptr`。
 这样 Go 编译器不再认为 `addrObj` 同后面函数 `causeEscape` 使用的参数 `i` 存在引用关系，从而绕过 Escape Analysis Algorithm 。
 为了防止垃圾回收过程中 `obj` 被回收，可以使用 `obj.field1 = 0` 来保持 `obj` 活跃。
