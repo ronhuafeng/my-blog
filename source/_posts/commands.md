@@ -32,3 +32,17 @@ ffmpeg -r 30 -start_number 3455 -i _IMG%d.jpg -s 960X600 -pix_fmt yuv420p 30fps-
 - more details: search engine
   - how to avoid globa packages
   - how to copy an environment
+
+## node && npm
+
+npm complains: `Error: Cannot find module 'process-nextick-args'`
+
+Uninstall node, `brew uninstall node`, then by [this stackoverflow post](https://stackoverflow.com/questions/11177954/how-do-i-completely-uninstall-node-js-and-reinstall-from-beginning-mac-os-x):
+
+```
+sudo rm -rf /usr/local/bin/npm /usr/local/share/man/man1/node* /usr/local/lib/dtrace/node.d ~/.npm ~/.node-gyp 
+sudo rm -rf /opt/local/bin/node /opt/local/include/node /opt/local/lib/node_modules
+sudo rm -rf /usr/local/bin/npm /usr/local/share/man/man1/node.1 /usr/local/lib/dtrace/node.d
+```
+
+Just delete something, then `brew install npm`.
