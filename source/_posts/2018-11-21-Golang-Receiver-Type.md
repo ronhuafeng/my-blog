@@ -113,7 +113,7 @@ main.main()
 
 Stack trace 中函数 `f` 第一个值是指针 `r` 的值。
 
-```
+```go
 package main
 
 type R1 struct {
