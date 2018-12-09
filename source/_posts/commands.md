@@ -46,3 +46,8 @@ sudo rm -rf /usr/local/bin/npm /usr/local/share/man/man1/node.1 /usr/local/lib/d
 ```
 
 Just delete something, then `brew install npm`.
+
+## delve (dlv) tips
+
+- funcs [regexp] : get function list
+- call : call a function (in a newer a go version, dlv should be installed in the newer go version too)
