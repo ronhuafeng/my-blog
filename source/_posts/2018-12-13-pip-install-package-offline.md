@@ -1,11 +1,11 @@
 ---
 title: pip 离线安装包
+date: 2018-12-13
 tags:
   - python
 categories:
   - 技术记录
   - tech-notes
-date: 2018-12-13 00:00:00
 ---
 
 ## 1. 使用场景
