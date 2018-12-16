@@ -51,3 +51,9 @@ Just delete something, then `brew install npm`.
 
 - funcs [regexp] : get function list
 - call : call a function (in a newer a go version, dlv should be installed in the newer go version too)
+
+## ss
+
+`ssserver -c /etc/shadowsocks/config.json`
+
+`sslocal` and `ssserver` are all from `apt-get install shadowsocks`.
