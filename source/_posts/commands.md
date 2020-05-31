@@ -52,8 +52,27 @@ Just delete something, then `brew install npm`.
 - funcs [regexp] : get function list
 - call : call a function (in a newer a go version, dlv should be installed in the newer go version too)
 
-## ss
+## shadowsocks
 
 `ssserver -c /etc/shadowsocks/config.json`
 
 `sslocal` and `ssserver` are all from `apt-get install shadowsocks`.
+
+## WSL 2 && VMware switch
+
+After enabling WSL 2 on Windows 10 insider preview, VMware virtual machine is disabled.
+This is because collision between Hyper-V and VMware.
+
+Turn on VMware
+
+```
+ bcdedit /set hypervisorlaunchtype off
+```
+
+Turn on Hyper-V && WSL 2
+
+```
+ bcdedit /set hypervisorlaunchtype auto
+```
+
+reference: https://blog.minirplus.com/10268/
