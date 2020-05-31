@@ -6,7 +6,7 @@ theme = "diary"
 disqusShortname = "bef0rewind-blog"
 
 [frontmatter]
-date = [":filename", ":default"]
+date = [":filename", ":default"]  
 
 [permalinks]
 posts = "/:year/:month/:day/:filename"
