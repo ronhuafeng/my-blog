@@ -3,6 +3,8 @@ languageCode = "zh-cn"
 title = "不是追风少年"
 theme = "diary"
 
+disqusShortname = "bef0rewind-blog"
+
 [frontmatter]
 date = [":filename", ":default"]
 
