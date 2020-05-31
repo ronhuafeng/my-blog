@@ -1,6 +1,6 @@
-baseURL = "http://example.org/"
-languageCode = "en-us"
-title = "My New Hugo Site"
+baseURL = "https://blog.formalscience.com/"
+languageCode = "zh-cn"
+title = "不是追风少年"
 theme = "diary"
 
 [frontmatter]
