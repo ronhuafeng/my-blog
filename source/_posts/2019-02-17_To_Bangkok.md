@@ -7,19 +7,16 @@ tags:
   - Travel
 ---
 
-- [Visa](#visa)
-  - [普通落地签证/Visa on Arrival (VOA)](#普通落地签证visa-on-arrival-voa)
+- [普通落地签证/Visa on Arrival (VOA)](#普通落地签证visa-on-arrival-voa)
   - [落地签需要的条件](#落地签需要的条件)
   - [签证有效期](#签证有效期)
-  - [电子落地签证/E-Visa on Arrival(E-VOA)](#电子落地签证e-visa-on-arrivale-voa)
+- [电子落地签证/E-Visa on Arrival(E-VOA)](#电子落地签证e-visa-on-arrivale-voa)
   - [实际操作](#实际操作)
 - [换汇](#换汇)
   - [实际操作](#实际操作-1)
 - [实用信息](#实用信息)
 
-## Visa
-
-### 普通落地签证/Visa on Arrival (VOA)
+## 普通落地签证/Visa on Arrival (VOA)
 
 中国公民适用普通落地签政策，相关政策链接：
 > http://www.thaiembassy.com/thailand/visa-on-arrival.php
@@ -46,7 +43,7 @@ tags:
 
 落地签有效期15天(包括入境当天)，如为以旅游为目的则不可延期。离境时签证过期需向移民局缴纳罚款，1天500铢，最高不超2万铢。
 
-### 电子落地签证/E-Visa on Arrival(E-VOA)
+## 电子落地签证/E-Visa on Arrival(E-VOA)
 
 根据实际经验，落地泰国后如果走普通落地签的通道，队伍比较长，特别是航班密集落地的时候。
 还有一种可以在网上预先申请的电子落地签，较为方便。
@@ -65,9 +62,9 @@ tags:
 
 有两家公司可以提供这项服务：
 
-1. http://www.evisathailand.com
+1. VFS Global: http://www.evisathailand.com
    - 普通服务：525 THB
-2. https://thailandevoa.vfsevisa.com
+2. evisathailand: https://thailandevoa.vfsevisa.com
    - 普通服务：600 THB
    - 快速服务（24 小时出结果）：2500 THB
 
@@ -82,7 +79,7 @@ tags:
   - 国内一般只要提前一天预约就可以，不一定要本人换，其他人也可以帮你换，如果分行储备很充足，当天也可以换到，你试试不一定来不及吧
   - 机场也有换，就是汇率不是很划算，如果担心那边没人可以再出发的机场换，你早点到机场，先换一点够用就行，剩下你过了关再换。
   - 华夏银行卡 http://wenzhang.16fan.com/a/98638.html
-3. 换汇处，之后去super rich换汇率最划算
+3. 换汇处，之后去 super rich 换汇率最划算
 
 ### 实际操作
 
