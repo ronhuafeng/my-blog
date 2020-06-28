@@ -76,3 +76,7 @@ Turn on Hyper-V && WSL 2
 ```
 
 reference: https://blog.minirplus.com/10268/
+
+## Check Docker logs
+
+`sudo journalctl --no-hostname --no-pager -b -u docker.service`
